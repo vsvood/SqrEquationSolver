@@ -7,37 +7,44 @@
 
 #include "equation_solver.h"
 
-enum class CheckResult {
+enum class CheckStatus {
     kOk,
-    kWrongResult,
-    kWrongRoots
+    kWrongStatus,
+    kWrongNRoots,
+    kWrongRoots,
 };
 
-extern const char* kCheckResultDescription[];
+extern const char *kCheckStatusDescription[];
+
+struct Test {
+    double a, b, c;
+    NRoots *n_roots_ans;
+    double *x1_ans, *x2_ans;
+    CustomStatus status_truth;
+    NRoots n_roots_truth;
+    double x1_truth, x2_truth;
+};
 
 /**
- * \brief Checks SolveSqrEquation with current params
- * @param[in] a - a coefficient
- * @param[in] b - b coefficient
- * @param[in] c - c coefficient
- * @param[in] kEps - minimum relative difference of different values
- * @param[in] rightNRoots - right number of roots
- * @param[in] rightX1 - right fst root (can be any if result = 0 or INFINITY)
- * @param[in] rightX2 - right snd root (can be any if result = 0 or 1 or INFINITY)
- * @param[in] name - name of test
+ * @brief Run SolveSqrEquation on specified test
  *
- * @return member of enum CheckResult:\n
- * kOk - ok, result and roots are equal to ground truth\n
- * kWrongResult - error, result differs from ground truth\n
- * kWrongRoots - error, roots differ from ground truth
+ * @param test - test for SolveSqrEquation
+ *
+ * @return member of CheckStatus:\n
+ * kOk - test passed\n
+ * kWrongStatus - solver return wrong status\n
+ * kWrongNRoots - solver return wrong number of roots\n
+ * kWrongRoots - solver return wrong roots
  */
 
-CheckResult Check(double a, double b, double c, Result rightResult, double rightX1, double rightX2, const char* name);
+CheckStatus Check(Test test);
 
 /**
- * \brief Tests SolveSqrEquation with several presets
+ * @brief Tests SolveSqrEquation with several presets
+ *
+ * @return CheckStatus::kOk if all tests passed, status of first failed test otherwise
  */
 
-void SolveSqrEquationTest();
+CheckStatus SolveSqrEquationTest();
 
 #endif //SQREQUATIONSOLVER_EQUATION_SOLVER_TEST_H

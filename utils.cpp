@@ -15,7 +15,7 @@ bool Equal(double a, double b) {
     b = tmp;
   }
 
-  int b_exp;
+  int b_exp = 0;
   frexp(b, &b_exp);
   b = ldexp(b, 1-b_exp);
   a = ldexp(a, 1-b_exp);

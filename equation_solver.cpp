@@ -8,70 +8,78 @@
 
 #include "utils.h"
 
-const char* kResultDescription[] = {
-  "'No roots'",
-  "'One root'",
-  "'Two roots'",
-  "'Any number is root'",
-  "'Can't solve'",
-  "'a is infinite'",
-  "'b is infinite'",
-  "'c is infinite'",
-  "'x1 is nullptr'",
-  "'x2 is nullptr'",
-  "'x1 and x2 are equal ptr'"
-};
-
-Result SolveSqrEquation(double a, double b, double c, double* x1, double* x2) {
-  if (std::isinf(a))
-    return Result::kErrorAInfinite;
-  if (std::isinf(b))
-    return Result::kErrorBInfinite;
-  if (std::isinf(c))
-    return Result::kErrorCInfinite;
-  if (x1 == nullptr)
-    return Result::kErrorNullptrX1;
-  if (x2 == nullptr)
-    return Result::kErrorNullptrX2;
-  if (x1 == x2)
-    return Result::kErrorEqualPtr;
-
-  if (Equal(a, 0))  // linear equation case
-    if (Equal(b, 0))
-      if (Equal(c, 0))  // 0x = 0 - any number is root
-        return Result::kSolvedAnyNumber;
-      else  // 0x <> 0 - no roots
-        return Result::kSolvedNoRoots;
-    else {  // bx + c = 0, b <> 0, c <> 0
-      *x1 = -c / b;
-      if (std::isinf(*x1))
-        return Result::kCantSolve;
-      return Result::kSolvedOneRoot;
-    }
-  else {  // ax2 + bx + c = 0, a <> 0
-    double D = b*b - 4*a*c;
-    if (std::isinf(D))
-      return Result::kCantSolve;
-    if (D < 0)
-      return Result::kSolvedNoRoots;
-    else if (Equal(D, 0)) {
-      *x1 = -b/2/a;
-      if (std::isinf(*x1))
-        return Result::kCantSolve;
-      return Result::kSolvedOneRoot;
-    }
-    else {
-      double sqrtD = sqrt(D);
-      *x1 = (-b-sqrtD)/2/a;
-      *x2 = (-b+sqrtD)/2/a;
-      if (std::isinf(*x1))
-        return Result::kCantSolve;
-      if (std::isinf(*x2))
-        return Result::kCantSolve;
-      if (Equal(*x1, *x2))  // check if roots are equal
-        return Result::kSolvedOneRoot;
-      else
-        return Result::kSolvedTwoRoots;
-    }
+CustomStatus SolveSqrEquation(double a, double b, double c, NRoots *n_roots, double *x1, double *x2) {
+  if (std::isinf(a) || std::isinf(b) || std::isinf(c)) {
+    return CustomStatus::kWrongInputParams;
   }
+
+  if ((n_roots == nullptr) ||
+      (x1 == nullptr) || (x2 == nullptr) || (x1 == x2)) {
+    return CustomStatus::kWrongOutputParams;
+  }
+
+  if (Equal(a, 0)) {  // linear equation case
+    return SolveLinearEquation(b, c, n_roots, x1);
+  }
+
+  // ax2 + bx + c = 0, a <> 0
+  double D = b * b - 4 * a * c;
+  if (std::isinf(D)) { return CustomStatus::kRuntimeError; }
+
+  if (D < 0) {
+    *n_roots = NRoots::kNoRoots;
+    return CustomStatus::kOk;
+  }
+
+  if (Equal(D, 0)) {
+    *x1 = -b / 2 / a;
+    if (std::isinf(*x1)) { return CustomStatus::kRuntimeError; }
+
+    *n_roots = NRoots::kOneRoot;
+    return CustomStatus::kOk;
+  }
+
+  double sqrtD = sqrt(D);
+  *x1 = (-b-sqrtD)/2/a;
+  *x2 = (-b+sqrtD)/2/a;
+  if (std::isinf(*x1) || std::isinf(*x2)) {
+    return CustomStatus::kRuntimeError;
+  }
+
+  if (Equal(*x1, *x2)) {  // check if roots are equal
+    *n_roots = NRoots::kOneRoot;
+    return CustomStatus::kOk;
+  }
+
+  *n_roots = NRoots::kTwoRoots;
+  return CustomStatus::kOk;
+}
+
+CustomStatus SolveLinearEquation(double a, double b, NRoots *n_roots, double *x1) {
+  if (std::isinf(a) || std::isinf(b)) {
+    return CustomStatus::kWrongInputParams;
+  }
+
+  if ((n_roots == nullptr) || (x1 == nullptr)) {
+    return CustomStatus::kWrongOutputParams;
+  }
+
+
+  if (Equal(a, 0)) {
+    if (Equal(b, 0)) {  // 0x = 0 - any number is root
+      *n_roots = NRoots::kAnyNumber;
+      return CustomStatus::kOk;
+    }
+
+    // 0x <> 0 - no roots
+    *n_roots = NRoots::kNoRoots;
+    return CustomStatus::kOk;
+  }
+
+  // ax + b = 0, a <> 0
+  *x1 = -b / a;
+  if (std::isinf(*x1)) { return CustomStatus::kRuntimeError; }
+
+  *n_roots = NRoots::kOneRoot;
+  return CustomStatus::kOk;
 }

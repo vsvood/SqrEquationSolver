@@ -8,10 +8,7 @@
 extern const double kEps;
 
 /**
- * \brief Checks if a and b are equal.
- *
- * a and b are equal iff a = b or
- * relative difference is less then kEps
+ * @brief Checks if a and b are equal.
  *
  * @param[in] a - first value
  * @param[in] b - second value
