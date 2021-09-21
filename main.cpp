@@ -12,7 +12,11 @@ int main() {
     double b = NAN;
     double c = NAN;
     printf("Enter a, b, c coefficients (ax2+bx+c=0)\n");
-    scanf("%lf %lf %lf", &a, &b, &c);
+    int n_params = scanf("%lf %lf %lf", &a, &b, &c);
+
+    if (n_params != 3) {
+      printf("%d values on input, 3 expected\n", n_params);
+    }
 
     NRoots n_roots = NRoots::kNoRoots;
     double x1 = NAN;
