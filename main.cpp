@@ -4,7 +4,11 @@
 #include "equation_solver_test.h"
 
 int main() {
-    SolveSqrEquationTest();
+    CheckStatus check_status = SolveSqrEquationTest();
+    if (check_status != CheckStatus::kOk) {
+      printf("Tests failed\n");
+      return 1;
+    }
 
     printf("Your test\n");
 
@@ -16,6 +20,7 @@ int main() {
 
     if (n_params != 3) {
       printf("%d values on input, 3 expected\n", n_params);
+      return 2;
     }
 
     NRoots n_roots = NRoots::kNoRoots;
