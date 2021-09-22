@@ -44,9 +44,12 @@ int main() {
         case NRoots::kAnyNumber:
           printf("Any number is root\n");
           break;
+        default:
+          printf("Error: number of roots is uncommon (%d)", (int)n_roots);
+          break;
       }
     } else {
-      printf("Error '%s'\n", kCustomStatusDescription[(int)status]);
+      printf("Error: '%s'\n", kCustomStatusDescription[(int)status]);
     }
     return 0;
 }
