@@ -31,18 +31,20 @@ int main() {
     if (status == CustomStatus::kOk) {
       printf("Solved:\n");
 
-      if (n_roots == NRoots::kNoRoots) { printf("No roots\n"); }
-
-      if (n_roots == NRoots::kAnyNumber) { printf("Any number is root\n"); }
-
-      if (n_roots == NRoots::kOneRoot) {
-        printf("One root\nx1 = %E", x1);
+      switch (n_roots) {
+        case NRoots::kNoRoots:
+          printf("No roots\n");
+          break;
+        case NRoots::kOneRoot:
+          printf("One root\nx1 = %E", x1);
+          break;
+        case NRoots::kTwoRoots:
+          printf("Two roots\nx1 = %E\nx2= %E", x1, x2);
+          break;
+        case NRoots::kAnyNumber:
+          printf("Any number is root\n");
+          break;
       }
-
-      if (n_roots == NRoots::kTwoRoots) {
-        printf("Two roots\nx1 = %E\nx2= %E", x1, x2);
-      }
-
     } else {
       printf("Error '%s'\n", kCustomStatusDescription[(int)status]);
     }
